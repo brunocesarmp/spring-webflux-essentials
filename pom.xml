@@ -13,10 +13,24 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-webflux-essentials</name>
 	<description>Demo project for Spring WebFlux Essentials</description>
+
 	<properties>
 		<java.version>11</java.version>
+		<blockhound.version>1.0.6.RELEASE</blockhound.version>
+		<r2dbc-postgresql.version>0.8.2.RELEASE</r2dbc-postgresql.version>
 	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>io.projectreactor.tools</groupId>
+			<artifactId>blockhound</artifactId>
+			<version>${blockhound.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.r2dbc</groupId>
+			<artifactId>r2dbc-postgresql</artifactId>
+			<version>${r2dbc-postgresql.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
@@ -26,6 +40,7 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
