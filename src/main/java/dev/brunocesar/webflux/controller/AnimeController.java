@@ -4,11 +4,7 @@ package dev.brunocesar.webflux.controller;
 import dev.brunocesar.webflux.domain.Anime;
 import dev.brunocesar.webflux.service.AnimeService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -30,7 +26,25 @@ public class AnimeController {
     @GetMapping("{id}")
     public Mono<Anime> findById(@PathVariable int id) {
         return animeService.findById(id);
+    }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Anime> save(@RequestBody Anime anime) {
+        return animeService.save(anime);
+    }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> update(@RequestBody Anime anime, @PathVariable Integer id) {
+        anime.setId(id);
+        return animeService.update(anime);
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> delete(@PathVariable Integer id) {
+        return animeService.delete(id);
     }
 
 }

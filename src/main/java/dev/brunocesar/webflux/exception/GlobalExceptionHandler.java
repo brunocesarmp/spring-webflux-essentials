@@ -31,11 +31,10 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     @Override
     protected RouterFunction<ServerResponse> getRoutingFunction(ErrorAttributes errorAttributes) {
         return RouterFunctions.route(RequestPredicates.all(), this::formatErrorResponse);
-
     }
 
     private Mono<ServerResponse> formatErrorResponse(ServerRequest request) {
-        
+
         ErrorAttributeOptions errorAttributeOptions = isTraceEnabled(request)
                 ? ErrorAttributeOptions.of(ErrorAttributeOptions.Include.STACK_TRACE)
                 : ErrorAttributeOptions.defaults();

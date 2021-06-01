@@ -3,6 +3,7 @@ package dev.brunocesar.webflux.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
+import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
