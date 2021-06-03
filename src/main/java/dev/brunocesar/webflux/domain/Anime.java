@@ -3,8 +3,8 @@ package dev.brunocesar.webflux.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import reactor.core.publisher.Mono;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Table("anime")
@@ -13,6 +13,7 @@ public class Anime {
     @Id
     private Integer id;
 
+    @NotNull(message = "Name is required")
     private String name;
 
     public Anime() {

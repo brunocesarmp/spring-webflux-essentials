@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("anime")
+@RequestMapping("animes")
 public class AnimeController {
 
     private final AnimeService animeService;
@@ -19,24 +21,26 @@ public class AnimeController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Flux<Anime> listAll() {
         return animeService.findAll();
     }
 
     @GetMapping("{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Mono<Anime> findById(@PathVariable int id) {
         return animeService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<Anime> save(@RequestBody Anime anime) {
+    public Mono<Anime> save(@Valid @RequestBody Anime anime) {
         return animeService.save(anime);
     }
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> update(@RequestBody Anime anime, @PathVariable Integer id) {
+    public Mono<Void> update(@Valid @RequestBody Anime anime, @PathVariable Integer id) {
         anime.setId(id);
         return animeService.update(anime);
     }

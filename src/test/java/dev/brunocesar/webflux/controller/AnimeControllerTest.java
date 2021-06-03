@@ -54,7 +54,6 @@ class AnimeControllerTest {
 
         BDDMockito.when(animeService.update(AnimeCreator.createValidAnime()))
                 .thenReturn(Mono.empty());
-
     }
 
     @Test
