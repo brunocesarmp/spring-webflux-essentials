@@ -102,8 +102,6 @@ public class AnimeServiceTest {
 
         when(animeRepository.save(any())).thenReturn(Mono.just(anime));
 
-        doReturn(Mono.just(anime)).when(animeRepository.save(any()));
-
         var animeToBeSaved = AnimeCreator.createAnimeToBeSaved();
 
         StepVerifier.create(animeService.save(animeToBeSaved))
@@ -138,7 +136,7 @@ public class AnimeServiceTest {
     }
 
     @Test
-    @DisplayName("update save uppdated anime and returns empty mono when successful")
+    @DisplayName("update save updated anime and returns empty mono when successful")
     public void update_SaveUpdatedAnime_WhenSuccessful() {
 
         when(animeRepository.findById(anyInt())).thenReturn(Mono.just(AnimeCreator.createAnimeToBeSaved()));
