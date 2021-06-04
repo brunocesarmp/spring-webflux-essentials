@@ -3,24 +3,23 @@ package dev.brunocesar.webflux.controller;
 import dev.brunocesar.webflux.domain.Anime;
 import dev.brunocesar.webflux.service.AnimeService;
 import dev.brunocesar.webflux.util.AnimeCreator;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import reactor.blockhound.BlockHound;
-import reactor.blockhound.BlockingOperationError;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class AnimeControllerTest {
@@ -32,11 +31,6 @@ class AnimeControllerTest {
     private AnimeService animeService;
 
     private final Anime anime = AnimeCreator.createValidAnime();
-
-    @BeforeAll
-    public static void beforeAll() {
-        BlockHound.install();
-    }
 
     @BeforeEach
     public void beforeEach() {
@@ -54,21 +48,6 @@ class AnimeControllerTest {
 
         BDDMockito.when(animeService.update(AnimeCreator.createValidAnime()))
                 .thenReturn(Mono.empty());
-    }
-
-    @Test
-    public void blockHoundWorks() {
-        try {
-            FutureTask<?> task = new FutureTask<>(() -> {
-                Thread.sleep(0);
-                return "";
-            });
-            Schedulers.parallel().schedule(task);
-            task.get(10, TimeUnit.SECONDS);
-            Assertions.fail("should fail");
-        } catch (Exception e) {
-            Assertions.assertTrue(e.getCause() instanceof BlockingOperationError);
-        }
     }
 
     @Test
@@ -97,6 +76,21 @@ class AnimeControllerTest {
         StepVerifier.create(animeController.save(animeToBeSaved))
                 .expectSubscription()
                 .expectNext(anime)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("saveBatch creates a list of anime when successful")
+    public void saveBatch_CreateListOfAnime_WhenSuccessful() {
+
+        when(animeService.saveAll(List.of(AnimeCreator.createAnimeToBeSaved(), AnimeCreator.createAnimeToBeSaved())))
+                .thenReturn(Flux.just(anime, anime));
+
+        var animes = List.of(AnimeCreator.createAnimeToBeSaved(), AnimeCreator.createAnimeToBeSaved());
+
+        StepVerifier.create(animeController.saveBatch(animes))
+                .expectSubscription()
+                .expectNext(anime, anime)
                 .verifyComplete();
     }
 

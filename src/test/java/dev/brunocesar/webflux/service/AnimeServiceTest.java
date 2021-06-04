@@ -3,30 +3,21 @@ package dev.brunocesar.webflux.service;
 import dev.brunocesar.webflux.domain.Anime;
 import dev.brunocesar.webflux.repository.AnimeRepository;
 import dev.brunocesar.webflux.util.AnimeCreator;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.blockhound.BlockHound;
-import reactor.blockhound.BlockingOperationError;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -39,26 +30,6 @@ public class AnimeServiceTest {
     private AnimeRepository animeRepository;
 
     private final Anime anime = AnimeCreator.createValidAnime();
-
-    @BeforeAll
-    public static void beforeAll() {
-        BlockHound.install();
-    }
-
-    @Test
-    public void blockHoundWorks() {
-        try {
-            FutureTask<?> task = new FutureTask<>(() -> {
-                Thread.sleep(0);
-                return "";
-            });
-            Schedulers.parallel().schedule(task);
-            task.get(10, TimeUnit.SECONDS);
-            Assertions.fail("should fail");
-        } catch (Exception e) {
-            Assertions.assertTrue(e.getCause() instanceof BlockingOperationError);
-        }
-    }
 
     @Test
     @DisplayName("findAll returns a flux of anime")
@@ -108,6 +79,37 @@ public class AnimeServiceTest {
                 .expectSubscription()
                 .expectNext(anime)
                 .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("saveAll creates a list of anime when successful")
+    public void saveAll_CreateListOfAnime_WhenSuccessful() {
+
+        when(animeRepository.saveAll(List.of(AnimeCreator.createAnimeToBeSaved(), AnimeCreator.createAnimeToBeSaved())))
+                .thenReturn(Flux.just(anime, anime));
+
+        var animes = List.of(AnimeCreator.createAnimeToBeSaved(), AnimeCreator.createAnimeToBeSaved());
+
+        StepVerifier.create(animeService.saveAll(animes))
+                .expectSubscription()
+                .expectNext(anime, anime)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("saveAll returns mono error when one of the objects in the list contains null or empty name")
+    public void saveAll_ReturnMonoError_WhenContainsInvalidName() {
+
+        when(animeRepository.saveAll(List.of(AnimeCreator.createAnimeToBeSaved(), new Anime())))
+                .thenReturn(Flux.just(anime, new Anime()));
+
+        var animes = List.of(AnimeCreator.createAnimeToBeSaved(), new Anime());
+
+        StepVerifier.create(animeService.saveAll(animes))
+                .expectSubscription()
+                .expectNext(anime)
+                .expectError(ResponseStatusException.class)
+                .verify();
     }
 
     @Test
