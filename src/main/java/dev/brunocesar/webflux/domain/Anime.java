@@ -4,7 +4,7 @@ package dev.brunocesar.webflux.domain;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Table("anime")
@@ -13,7 +13,7 @@ public class Anime {
     @Id
     private Integer id;
 
-    @NotNull(message = "Name is required")
+    @NotBlank(message = "name is required")
     private String name;
 
     public Anime() {

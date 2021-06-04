@@ -102,7 +102,6 @@ class AnimeControllerTest {
                 .verifyComplete();
     }
 
-
     @Test
     @DisplayName("update save updated anime and returns empty mono when successful")
     public void update_SaveUpdatedAnime_WhenSuccessful() {
