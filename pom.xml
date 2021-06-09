@@ -17,9 +17,15 @@
 	<properties>
 		<java.version>11</java.version>
 		<r2dbc-postgresql.version>0.8.2.RELEASE</r2dbc-postgresql.version>
+		<springdoc-openapi-webflux-ui.version>1.5.9</springdoc-openapi-webflux-ui.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-webflux-ui</artifactId>
+			<version>${springdoc-openapi-webflux-ui.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>

@@ -14,11 +14,18 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
 
+    private static final String[] PUBLIC_MATCHERS;
+
+    static {
+        PUBLIC_MATCHERS = new String[]{"/webjars/**", "/v3/api-docs/**", "/swagger-ui.html"};
+    }
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
                 .csrf().disable()
                 .authorizeExchange()
+                .pathMatchers(PUBLIC_MATCHERS).permitAll()
                 .pathMatchers(HttpMethod.POST, "/animes/**").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.DELETE, "/animes/**").hasRole("ADMIN")
                 .pathMatchers(HttpMethod.PUT, "/animes/**").hasRole("ADMIN")
